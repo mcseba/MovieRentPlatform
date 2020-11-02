@@ -1,0 +1,37 @@
+﻿@using Vidly.Controllers
+@model IQueryable<Vidly.Models.Customer>
+@{
+    ViewBag.Title = "Customers";
+    Layout = "_Layout";
+}
+
+<h2 class="bg-dark">Customers</h2>
+
+@if (!Model.Any())
+{
+    <p class="table-info">No customers found.</p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>Name</th>
+            <th>Membership Type</th>
+            <th>Discount Rate</th>
+            <th>Link</th>
+        </tr>
+        @foreach (var customer in Model)
+        {
+        <tr>
+            <td>@customer.Name</td>
+            <td>@customer.MembershipType.Name</td>
+            <td>@customer.MembershipType.DiscountRate%</td>
+            <td>@Html.ActionLink("View Customer",
+                    "ShowCustomer",
+                    "Customers",
+                    new {id = @customer.Id})
+                </td>
+        </tr>
+        }
+    </table>
+}
