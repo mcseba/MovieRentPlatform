@@ -27,16 +27,16 @@ namespace Vidly.Controllers
         public IActionResult New()
         {
             var membershipTypes = _context.MembershipTypes.ToList();
-            var viewModel = new NewCustomerViewModel
+            var viewModel = new CustomerFormViewModel
             {
                 MembershipTypes = membershipTypes
             };
 
-            return View(viewModel);
+            return View("CustomerForm", viewModel);
         }
 
         [HttpPost]
-        public IActionResult Create(Customer customer)
+        public IActionResult Save(Customer customer)
         {
             _context.Customers.Add(customer);
             _context.SaveChanges();
@@ -51,10 +51,26 @@ namespace Vidly.Controllers
             return View(customers);
         }
 
-        public IActionResult ShowCustomer(int id)
+/*        public IActionResult ShowCustomer(int id)
         {
             var customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(x => x.Id == id);
             return View(customer);
+        }*/
+
+        public IActionResult EditCustomer(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+                return NotFound();
+
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = customer,
+                MembershipTypes = _context.MembershipTypes.ToList()
+            };
+
+            return View("CustomerForm", viewModel);
         }
     }
 }
