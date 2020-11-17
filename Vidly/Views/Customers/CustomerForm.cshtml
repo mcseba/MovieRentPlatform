@@ -1,0 +1,29 @@
+﻿@model Vidly.ViewModels.CustomerFormViewModel
+@{
+    ViewData["Title"] = "New";
+    Layout = "_Layout";
+}
+
+<h1>New Customer</h1>
+
+@using (Html.BeginForm("Save", "Customers"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Name)
+        @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control" })
+    </div>    
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Birthday)
+        @Html.TextBoxFor(m => m.Customer.Birthday, "{0:d MMM yyyy}", new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.MembershipTypeId)
+        @Html.DropDownListFor(m => m.Customer.MembershipTypeId, new SelectList(Model.MembershipTypes, "Id", "Name"), "Select Membership Type", new {@class = "form-control"})
+    </div>
+    <div class="custom-checkbox">
+        <label>
+            @Html.CheckBoxFor(m => m.Customer.IsSubscribed) Subscribed to Newsletter?
+        </label>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+}
