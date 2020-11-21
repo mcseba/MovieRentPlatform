@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewData["Title"] - Vidly</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/*.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <partial name="_NavBar" />
+    <div class="container">
+        <a asp-action="AddMovie" asp-controller="Movies" asp-route-id="0" 
+           class="btn rounded-pill bg-primary"
+         >
+            Add Movie
+        </a>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - Vidly - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
