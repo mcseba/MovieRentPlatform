@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Vidly.Models;
 using System.Data.Entity;
+using Vidly.ViewModels;
+using System.Data.Entity.Validation;
 
 namespace Vidly.Controllers
 {
@@ -31,6 +33,60 @@ namespace Vidly.Controllers
             var movie = _context.Movies.Include(m => m.Genre)
                 .SingleOrDefault(m => m.Id == id);
             return View(movie);
+        }
+
+        public IActionResult AddMovie()
+        {
+            var genres = _context.Genres.ToList();
+            var movie = new Movie
+            {
+                DateAdded = DateTime.Today.Date
+            };
+
+            var viewModel = new MovieFormViewModel
+            {
+                Genres = genres,
+                Movie = movie
+            };
+
+            return View("NewMovieForm", viewModel);
+        }
+
+        public IActionResult SaveMovie(Movie movie)
+        {
+            try
+            {
+                if (movie.Id == 0)
+            {
+                _context.Movies.Add(movie);
+            }
+            else
+            {
+                var movieInDb = _context.Movies.Single(m => m.Id == movie.Id);
+
+                movieInDb.Name = movie.Name;
+                movieInDb.NumberInStock = movie.NumberInStock;
+                movieInDb.ReleaseYear = movie.ReleaseYear;
+                movieInDb.DateAdded = movie.DateAdded;
+                movieInDb.GenreId = movie.GenreId;
+            }
+
+            _context.SaveChanges();
+            } 
+            catch(DbEntityValidationException e)
+            {
+                foreach(var ex in e.EntityValidationErrors)
+                {
+                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following " +
+                        "validation errors: ", ex.Entry.Entity.GetType().Name, ex.Entry.State);
+                    foreach (var ve in ex.ValidationErrors)
+                    {
+                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
+                    }
+                }
+            }
+
+            return RedirectToAction("Index", "Movies");
         }
     }
 }
