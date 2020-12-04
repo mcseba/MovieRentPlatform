@@ -32,7 +32,17 @@ namespace Vidly.Controllers
         {
             var movie = _context.Movies.Include(m => m.Genre)
                 .SingleOrDefault(m => m.Id == id);
-            return View(movie);
+            var genres = _context.Genres.ToList();
+
+            var viewModel = new MovieFormViewModel
+            {
+                Genres = genres,
+                Movie = movie
+            };
+
+            ViewBag.Info = "Edit Movie";
+
+            return View("NewMovieForm", viewModel);
         }
 
         public IActionResult AddMovie()
@@ -40,7 +50,7 @@ namespace Vidly.Controllers
             var genres = _context.Genres.ToList();
             var movie = new Movie
             {
-                DateAdded = DateTime.Today.Date
+                DateAdded = DateTime.Today
             };
 
             var viewModel = new MovieFormViewModel
@@ -49,14 +59,24 @@ namespace Vidly.Controllers
                 Movie = movie
             };
 
+            ViewBag.Info = "New movie";
+
             return View("NewMovieForm", viewModel);
         }
 
         public IActionResult SaveMovie(Movie movie)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (movie.Id == 0)
+                var viewModel = new MovieFormViewModel
+                {
+                    Movie = movie,
+                    Genres = _context.Genres.ToList()
+                };
+                return View("NewMovieForm", viewModel);
+            }
+
+            if (movie.Id == 0)
             {
                 _context.Movies.Add(movie);
             }
@@ -72,19 +92,6 @@ namespace Vidly.Controllers
             }
 
             _context.SaveChanges();
-            } 
-            catch(DbEntityValidationException e)
-            {
-                foreach(var ex in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following " +
-                        "validation errors: ", ex.Entry.Entity.GetType().Name, ex.Entry.State);
-                    foreach (var ve in ex.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-            }
 
             return RedirectToAction("Index", "Movies");
         }
