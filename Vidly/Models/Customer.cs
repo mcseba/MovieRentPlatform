@@ -11,11 +11,12 @@ namespace Vidly.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter customer's name.")]
         [StringLength(255)]
         public string Name { get; set; }
 
         [Display(Name = "Date of Birth")]
+        [CustomerMemberIfMin16Years]
         public DateTime? Birthday { get; set; }
 
         public bool IsSubscribed { get; set; }
